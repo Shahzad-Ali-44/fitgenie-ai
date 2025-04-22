@@ -14,7 +14,7 @@ const App = () => {
     health_conditions: "",
     specific_concerns_or_questions: "",
   });
-  
+
   const placeholders: Record<keyof typeof formData, string> = {
     dietary_preferences: "e.g., vegetarian, vegan",
     fitness_goals: "e.g., weight loss, muscle gain",
@@ -35,7 +35,10 @@ const App = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("https://fitgenie-ai-backend.vercel.app/recommendations", formData);
+      const response = await axios.post(
+        "https://fitgenie-ai-backend.vercel.app/recommendations",
+        formData
+      );
       setRecommendations(response.data);
     } catch (error) {
       console.error("Error fetching recommendations:", error);
@@ -45,19 +48,25 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white flex flex-col items-center justify-start py-10 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-white flex flex-col items-center justify-start py-10 px-4">
       <header className="text-center mb-10">
-        <h1 className="text-4xl font-extrabold text-indigo-400 drop-shadow-md">FitGenie AI</h1>
-        <p className="text-lg text-slate-400 mt-2">AI-powered Fitness & Nutrition Guidance</p>
+        <h1 className="text-5xl font-extrabold bg-gradient-to-r from-indigo-400 to-pink-400 text-transparent bg-clip-text drop-shadow-lg">
+          FitGenie AI
+        </h1>
+        <p className="text-xl text-slate-300 mt-3">
+          Your AI-Powered Fitness & Nutrition Guide
+        </p>
       </header>
-    
-      <Card className="w-full max-w-2xl p-8 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl transition-all">
-        <h2 className="text-2xl font-bold text-center text-indigo-300 mb-6">Get Your Custom Plan</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+      <Card className="w-full max-w-2xl p-10 bg-white/5 backdrop-blur-2xl border border-white/20 shadow-xl rounded-3xl">
+        <h2 className="text-3xl font-bold text-center text-indigo-200 mb-8">
+          Build Your Personalized Plan
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
           {Object.entries(formData).map(([key, value]) => (
             <div key={key}>
-              <label className="block text-sm font-medium text-slate-300 mb-1 capitalize">
+              <label className="block text-sm font-medium text-slate-300 mb-2 capitalize">
                 {key.replace(/_/g, " ")}
               </label>
               <Input
@@ -65,16 +74,15 @@ const App = () => {
                 value={value}
                 onChange={handleInputChange}
                 required
-                autoComplete="true"
                 placeholder={placeholders[key as keyof typeof placeholders]}
-                className="w-full rounded-xl bg-white/10 text-white placeholder:text-slate-400 border border-white/20 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="w-full rounded-xl bg-white/10 text-white placeholder:text-slate-400 border border-white/20 px-4 py-3 focus:ring-2 focus:ring-pink-500 focus:outline-none"
               />
             </div>
           ))}
 
           <Button
             type="submit"
-            className="w-full py-3 mt-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-white font-semibold"
+            className="w-full py-3 rounded-xl bg-pink-500 hover:bg-pink-600 transition font-semibold text-white shadow-md"
             disabled={loading}
           >
             {loading ? (
@@ -87,14 +95,16 @@ const App = () => {
           </Button>
         </form>
       </Card>
-     
+
       {recommendations && (
-        <Card className="w-full max-w-2xl mt-10 p-8 bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl">
-          <h3 className="text-2xl font-bold text-center text-green-400 mb-4">Your Personalized Plan</h3>
-          <div className="space-y-5 text-slate-200">
+        <Card className="w-full max-w-2xl mt-10 p-10 bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl">
+          <h3 className="text-3xl font-bold text-center text-green-400 mb-6">
+            Your Personalized Plan
+          </h3>
+          <div className="space-y-6 text-slate-200">
             {Object.entries(recommendations).map(([section, items]: any) => (
               <div key={section}>
-                <h4 className="text-lg font-semibold text-indigo-300 mb-2">
+                <h4 className="text-lg font-semibold text-pink-300 mb-2">
                   {section.replace(/_/g, " ").toUpperCase()}
                 </h4>
                 <ul className="list-disc list-inside space-y-1 text-sm">
@@ -111,10 +121,17 @@ const App = () => {
           </div>
         </Card>
       )}
-    
-      <footer className="mt-16 text-lg text-slate-200 text-center">
-        &copy; {new Date().getFullYear()} FitGenie AI | All rights reserved | Developed by <a className="underline" href="https://shahzadali.vercel.app/" target="_blank" rel="noopener noreferrer">Shahzad Ali</a>
 
+      <footer className="mt-16 text-base text-slate-400 text-center">
+        &copy; {new Date().getFullYear()} FitGenie AI | Crafted by {" "}
+        <a
+          className="underline hover:text-pink-400"
+          href="https://shahzadali.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Shahzad Ali
+        </a>
       </footer>
     </div>
   );
