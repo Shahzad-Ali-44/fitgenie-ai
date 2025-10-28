@@ -8,7 +8,7 @@ interface StepIndicatorProps {
 
 const StepIndicator = ({ currentStep, totalSteps, steps }: StepIndicatorProps) => {
   return (
-    <div className="w-full max-w-2xl mx-auto mb-8">
+    <div className="w-full max-w-2xl mx-auto py-8">
       <div className="flex items-center justify-between">
         {steps.map((step, index) => (
           <div key={index} className="flex items-center">
@@ -29,7 +29,7 @@ const StepIndicator = ({ currentStep, totalSteps, steps }: StepIndicatorProps) =
                 )}
               </div>
               <span
-                className={`text-xs mt-2 text-center max-w-20 ${
+                className={`text-xs mt-2 text-center max-w-20 whitespace-nowrap ${
                   index < currentStep
                     ? "text-indigo-400"
                     : index === currentStep - 1

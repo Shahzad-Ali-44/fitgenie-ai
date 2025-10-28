@@ -146,10 +146,9 @@ const RecommendationTool = () => {
         <div className="flex justify-between pt-6">
           <Button
             type="button"
-            variant="outline"
             onClick={handlePrevious}
             disabled={currentStep === 1}
-            className="px-6 py-3 border-indigo-500 text-indigo-400 hover:bg-indigo-500/10 rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white px-8 py-3 rounded-full shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Previous
@@ -188,7 +187,7 @@ const RecommendationTool = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 py-20">
+    <div className="min-h-screen bg-slate-900 pb-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <StepIndicator

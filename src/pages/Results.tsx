@@ -1,13 +1,21 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ArrowLeft, RotateCcw, CheckCircle, TrendingUp, Clock, Target } from "lucide-react";
+import { 
+  TrendingUp, 
+  Utensils, 
+  Dumbbell, 
+  Apple, 
+  Pill, 
+  BarChart, 
+  ArrowLeft
+} from "lucide-react";
 
 const Results = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const recommendations = location.state?.recommendations;
+  const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -18,7 +26,7 @@ const Results = () => {
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">No recommendations found</h1>
-          <Button onClick={() => navigate('/')} className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white px-8 py-3 rounded-full shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all duration-300 transform hover:scale-105">
+          <Button onClick={() => navigate('/')} className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white px-8 py-3 rounded-full shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all duration-300">
             Go Home
           </Button>
         </div>
@@ -26,22 +34,296 @@ const Results = () => {
     );
   }
 
-  const handleNewPlan = () => {
-    navigate('/plan');
-  };
 
-  const handleGoHome = () => {
+  const handleBackHome = () => {
     navigate('/');
   };
 
+  const tabs = [
+    { id: "overview", label: "Overview", icon: TrendingUp },
+    { id: "diet", label: "Diet Plan", icon: Utensils },
+    { id: "workout", label: "Workout", icon: Dumbbell },
+    { id: "meals", label: "Meal Ideas", icon: Apple },
+    { id: "supplements", label: "Supplements & Tips", icon: Pill },
+    { id: "progress", label: "Progress", icon: BarChart }
+  ];
+
+  const renderOverviewTab = () => (
+    <div className="space-y-6">
+      <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+        <h3 className="text-xl font-bold text-white mb-4">Personalized Summary</h3>
+        <p className="text-slate-300 leading-relaxed">{recommendations.personalized_summary}</p>
+      </div>
+
+      {recommendations.bmi_analysis && (
+        <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+          <h3 className="text-xl font-bold text-white mb-4">Health Analysis</h3>
+          <p className="text-slate-300 leading-relaxed">{recommendations.bmi_analysis}</p>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderDietTab = () => (
+    <div className="space-y-6">
+      {recommendations.diet_plan && (
+        <>
+          <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+            <h3 className="text-xl font-bold text-white mb-4">Diet Types</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {recommendations.diet_plan.diet_types?.map((item: string, index: number) => (
+                <div key={index} className="flex items-center p-3 bg-slate-700/50 rounded-lg">
+                  <span className="text-slate-300">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {recommendations.diet_plan.daily_calories && (
+              <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+                <h4 className="text-lg font-bold text-white mb-3">Daily Calories</h4>
+                <p className="text-slate-300">{recommendations.diet_plan.daily_calories}</p>
+              </div>
+            )}
+
+            {recommendations.diet_plan.macros && (
+              <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+                <h4 className="text-lg font-bold text-white mb-3">Macronutrients</h4>
+                <p className="text-slate-300">{recommendations.diet_plan.macros}</p>
+              </div>
+            )}
+          </div>
+
+          {recommendations.diet_plan.meal_timing && (
+            <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+              <h4 className="text-lg font-bold text-white mb-4">Meal Timing</h4>
+              <div className="space-y-2">
+                {recommendations.diet_plan.meal_timing.map((timing: string, index: number) => (
+                  <div key={index} className="flex items-center p-3 bg-slate-700/50 rounded-lg">
+                    <span className="text-slate-300">{timing}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {recommendations.diet_plan.hydration && (
+            <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+              <h4 className="text-lg font-bold text-white mb-4">Hydration</h4>
+              <div className="space-y-2">
+                {recommendations.diet_plan.hydration.map((item: string, index: number) => (
+                  <div key={index} className="flex items-center p-3 bg-slate-700/50 rounded-lg">
+                    <span className="text-slate-300">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+
+  const renderWorkoutTab = () => (
+    <div className="space-y-6">
+      {recommendations.workout_plan && (
+        <>
+          <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+            <h3 className="text-xl font-bold text-white mb-4">Workout Types</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {recommendations.workout_plan.workout_types?.map((item: string, index: number) => (
+                <div key={index} className="flex items-center p-3 bg-slate-700/50 rounded-lg">
+                  <span className="text-slate-300">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {recommendations.workout_plan.frequency && (
+              <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+                <h4 className="text-lg font-bold text-white mb-3">Frequency</h4>
+                <p className="text-slate-300">{recommendations.workout_plan.frequency}</p>
+              </div>
+            )}
+
+            {recommendations.workout_plan.duration && (
+              <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+                <h4 className="text-lg font-bold text-white mb-3">Duration</h4>
+                <p className="text-slate-300">{recommendations.workout_plan.duration}</p>
+              </div>
+            )}
+
+            {recommendations.workout_plan.intensity && (
+              <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+                <h4 className="text-lg font-bold text-white mb-3">Intensity</h4>
+                <p className="text-slate-300">{recommendations.workout_plan.intensity}</p>
+              </div>
+            )}
+          </div>
+
+          {recommendations.workout_plan.schedule && (
+            <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+              <h4 className="text-lg font-bold text-white mb-4">Weekly Schedule</h4>
+              <div className="space-y-2">
+                {recommendations.workout_plan.schedule.map((day: string, index: number) => (
+                  <div key={index} className="flex items-center p-3 bg-slate-700/50 rounded-lg">
+                    <span className="text-slate-300">{day}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+
+  const renderMealsTab = () => (
+    <div className="space-y-6">
+      {recommendations.meal_suggestions && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {Object.entries(recommendations.meal_suggestions).map(([mealType, meals]: any) => (
+            <div key={mealType} className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+              <h3 className="text-lg font-bold text-white capitalize mb-4">{mealType}</h3>
+              <div className="space-y-2">
+                {Array.isArray(meals) && meals.map((meal: string, index: number) => (
+                  <div key={index} className="flex items-start p-3 bg-slate-700/50 rounded-lg">
+                    <span className="text-slate-300 text-sm">{meal}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  const renderSupplementsTab = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {recommendations.supplements && (
+          <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+            <h3 className="text-lg font-bold text-white mb-4">Supplements</h3>
+            <div className="space-y-2">
+              {recommendations.supplements.map((item: string, index: number) => (
+                <div key={index} className="flex items-start p-3 bg-slate-700/50 rounded-lg">
+                  <span className="text-slate-300 text-sm">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {recommendations.lifestyle_tips && (
+          <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+            <h3 className="text-lg font-bold text-white mb-4">Lifestyle Tips</h3>
+            <div className="space-y-2">
+              {recommendations.lifestyle_tips.map((item: string, index: number) => (
+                <div key={index} className="flex items-start p-3 bg-slate-700/50 rounded-lg">
+                  <span className="text-slate-300 text-sm">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderProgressTab = () => (
+    <div className="space-y-6">
+      {recommendations.progress_tracking && (
+        <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+          <h3 className="text-xl font-bold text-white mb-4">Progress Tracking</h3>
+          <div className="space-y-2">
+            {recommendations.progress_tracking.map((item: string, index: number) => (
+              <div key={index} className="flex items-center p-3 bg-slate-700/50 rounded-lg">
+                <span className="text-slate-300">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {recommendations.concern_response && (
+        <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+          <h3 className="text-xl font-bold text-white mb-4">Answer to Your Question</h3>
+          <div className="text-slate-300 leading-relaxed">
+            {(() => {
+              const parts = recommendations.concern_response.split(/(\d+\.\s)/);
+              const introText = parts[0].trim();
+              const numberedParts = parts.slice(1);
+              
+              return (
+                <>
+                  {introText && (
+                    <p className="mb-4 text-slate-300 leading-relaxed">
+                      {introText.split('**').map((part: string, index: number) => {
+                        if (index % 2 === 1) {
+                          return <strong key={index} className="text-white font-semibold">{part}</strong>;
+                        }
+                        return part;
+                      })}
+                    </p>
+                  )}
+                  {numberedParts.map((part: string, partIndex: number) => {
+                    if (part.match(/^\d+\.\s$/)) {
+                      return (
+                        <div key={partIndex} className="mb-3">
+                          <span className="text-indigo-400 font-bold text-lg">{part}</span>
+                          {partIndex + 1 < numberedParts.length && (
+                            <span className="ml-2">
+                              {numberedParts[partIndex + 1].split('**').map((boldPart: string, boldPartIndex: number) => {
+                                if (boldPartIndex % 2 === 1) {
+                                  return <strong key={boldPartIndex} className="text-white font-semibold">{boldPart}</strong>;
+                                }
+                                return boldPart;
+                              })}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "overview":
+        return renderOverviewTab();
+      case "diet":
+        return renderDietTab();
+      case "workout":
+        return renderWorkoutTab();
+      case "meals":
+        return renderMealsTab();
+      case "supplements":
+        return renderSupplementsTab();
+      case "progress":
+        return renderProgressTab();
+      default:
+        return renderOverviewTab();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-900 py-20">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
+    <div className="min-h-screen bg-slate-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center justify-between mb-8">
           <Button
-            variant="ghost"
-            onClick={handleGoHome}
-            className="text-white hover:text-indigo-400 mb-6"
+            onClick={handleBackHome}
+            className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white px-6 py-3 rounded-full shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all duration-300"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
@@ -49,225 +331,37 @@ const Results = () => {
         </div>
 
         <div className="text-center mb-12">
-          <div className="inline-flex items-center px-6 py-3 bg-green-500/20 border border-green-500/30 rounded-full text-green-300 font-medium mb-6">
-            <CheckCircle className="w-5 h-5 mr-2" />
-            Your Personalized Plan is Ready!
-          </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Your <span className="text-indigo-400">Fitness Journey</span> Starts Here
+            Your <span className="text-indigo-400">Fitness Plan</span>
           </h1>
-          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-            {recommendations.personalized_summary}
-          </p>
         </div>
 
-        <div className="space-y-8">
-          {recommendations.bmi_analysis && (
-            <Card className="p-8 bg-slate-800/50 border border-slate-700/50 shadow-xl rounded-3xl">
-              <div className="flex items-center mb-4">
-                <TrendingUp className="w-6 h-6 text-indigo-400 mr-3" />
-                <h3 className="text-2xl font-bold text-indigo-300">Health Analysis</h3>
-              </div>
-              <p className="text-slate-200 text-lg">{recommendations.bmi_analysis}</p>
-            </Card>
-          )}
-
-          {recommendations.diet_plan && (
-            <Card className="p-8 bg-slate-800/50 border border-slate-700/50 shadow-xl rounded-3xl">
-              <div className="flex items-center mb-6">
-                <Target className="w-6 h-6 text-indigo-400 mr-3" />
-                <h3 className="text-2xl font-bold text-indigo-300">🍽️ Your Diet Plan</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  <h4 className="text-lg font-semibold text-slate-300 mb-4">Diet Types</h4>
-                  <ul className="space-y-3">
-                    {recommendations.diet_plan.diet_types?.map((item: string, index: number) => (
-                      <li key={index} className="text-slate-200 flex items-center">
-                        <div className="w-2 h-2 bg-indigo-400 rounded-full mr-3"></div>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="text-lg font-semibold text-slate-300 mb-4">Nutrition Details</h4>
-                  <div className="space-y-3 text-slate-200">
-                    {recommendations.diet_plan.daily_calories && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Calories:</span>
-                        <span>{recommendations.diet_plan.daily_calories}</span>
-                      </div>
-                    )}
-                    {recommendations.diet_plan.macros && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Macros:</span>
-                        <span className="text-right max-w-48">{recommendations.diet_plan.macros}</span>
-                      </div>
-                    )}
-                    {recommendations.diet_plan.meal_timing && (
-                      <div>
-                        <span className="font-medium block mb-2">Meal Timing:</span>
-                        <ul className="space-y-1">
-                          {recommendations.diet_plan.meal_timing.map((timing: string, index: number) => (
-                            <li key={index} className="text-sm">• {timing}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </Card>
-          )}
-
-          {recommendations.workout_plan && (
-            <Card className="p-8 bg-slate-800/50 border border-slate-700/50 shadow-xl rounded-3xl">
-              <div className="flex items-center mb-6">
-                <Clock className="w-6 h-6 text-indigo-400 mr-3" />
-                <h3 className="text-2xl font-bold text-indigo-300">💪 Your Workout Plan</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  <h4 className="text-lg font-semibold text-slate-300 mb-4">Workout Types</h4>
-                  <ul className="space-y-3">
-                    {recommendations.workout_plan.workout_types?.map((item: string, index: number) => (
-                      <li key={index} className="text-slate-200 flex items-center">
-                        <div className="w-2 h-2 bg-indigo-400 rounded-full mr-3"></div>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="text-lg font-semibold text-slate-300 mb-4">Schedule Details</h4>
-                  <div className="space-y-3 text-slate-200">
-                    {recommendations.workout_plan.frequency && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Frequency:</span>
-                        <span>{recommendations.workout_plan.frequency}</span>
-                      </div>
-                    )}
-                    {recommendations.workout_plan.duration && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Duration:</span>
-                        <span>{recommendations.workout_plan.duration}</span>
-                      </div>
-                    )}
-                    {recommendations.workout_plan.intensity && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Intensity:</span>
-                        <span>{recommendations.workout_plan.intensity}</span>
-                      </div>
-                    )}
-                    {recommendations.workout_plan.schedule && (
-                      <div>
-                        <span className="font-medium block mb-2">Weekly Schedule:</span>
-                        <ul className="space-y-1">
-                          {recommendations.workout_plan.schedule.map((day: string, index: number) => (
-                            <li key={index} className="text-sm">• {day}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </Card>
-          )}
-
-          {recommendations.meal_suggestions && (
-            <Card className="p-8 bg-slate-800/50 border border-slate-700/50 shadow-xl rounded-3xl">
-              <h3 className="text-2xl font-bold text-indigo-300 mb-6">🍎 Meal Suggestions</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {Object.entries(recommendations.meal_suggestions).map(([mealType, meals]: any) => (
-                  <div key={mealType}>
-                    <h4 className="text-lg font-semibold text-slate-300 mb-4 capitalize">
-                      {mealType}
-                    </h4>
-                    <ul className="space-y-2">
-                      {Array.isArray(meals) && meals.map((meal: string, index: number) => (
-                        <li key={index} className="text-slate-200 flex items-start">
-                          <div className="w-2 h-2 bg-indigo-400 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                          {meal}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {recommendations.supplements && (
-              <Card className="p-6 bg-slate-800/50 border border-slate-700/50 shadow-xl rounded-3xl">
-                <h3 className="text-xl font-bold text-indigo-300 mb-4">💊 Recommended Supplements</h3>
-                <ul className="space-y-2">
-                  {recommendations.supplements.map((item: string, index: number) => (
-                    <li key={index} className="text-slate-200 flex items-start">
-                      <div className="w-2 h-2 bg-indigo-400 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            )}
-
-            {recommendations.lifestyle_tips && (
-              <Card className="p-6 bg-slate-800/50 border border-slate-700/50 shadow-xl rounded-3xl">
-                <h3 className="text-xl font-bold text-indigo-300 mb-4">🌟 Lifestyle Tips</h3>
-                <ul className="space-y-2">
-                  {recommendations.lifestyle_tips.map((item: string, index: number) => (
-                    <li key={index} className="text-slate-200 flex items-start">
-                      <div className="w-2 h-2 bg-indigo-400 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            )}
+        <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-2 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center justify-center px-3 py-3 rounded-xl transition-all duration-300 ${
+                    activeTab === tab.id
+                      ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/30"
+                      : "text-slate-300 hover:text-white hover:bg-slate-700/50"
+                  }`}
+                >
+                  <Icon className="w-4 h-4 mr-2" />
+                  <span className="font-medium text-sm">{tab.label}</span>
+                </button>
+              );
+            })}
           </div>
-
-          {recommendations.progress_tracking && (
-            <Card className="p-6 bg-slate-800/50 border border-slate-700/50 shadow-xl rounded-3xl">
-              <h3 className="text-xl font-bold text-indigo-300 mb-4">📊 Progress Tracking</h3>
-              <ul className="space-y-2">
-                {recommendations.progress_tracking.map((item: string, index: number) => (
-                  <li key={index} className="text-slate-200 flex items-start">
-                    <div className="w-2 h-2 bg-indigo-400 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          )}
-
-          {recommendations.concern_response && (
-            <Card className="p-6 bg-slate-800/50 border border-slate-700/50 shadow-xl rounded-3xl">
-              <h3 className="text-xl font-bold text-indigo-300 mb-4">❓ Your Questions Answered</h3>
-              <div className="text-slate-200">
-                {Array.isArray(recommendations.concern_response) ? (
-                  recommendations.concern_response.map((item: string, index: number) => (
-                    <p key={index} className="mb-2">{item}</p>
-                  ))
-                ) : (
-                  <p>{recommendations.concern_response}</p>
-                )}
-              </div>
-            </Card>
-          )}
         </div>
 
-        <div className="flex justify-center items-center mt-12">
-          <Button
-            onClick={handleNewPlan}
-            className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white px-8 py-3 rounded-full shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all duration-300 transform hover:scale-105"
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Create New Plan
-          </Button>
+        <div className="mb-8">
+          {renderTabContent()}
         </div>
+
       </div>
     </div>
   );
