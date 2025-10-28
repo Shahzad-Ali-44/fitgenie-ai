@@ -11,13 +11,24 @@ import {
   ArrowLeft,
   Download
 } from "lucide-react";
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 
 const Results = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const recommendations = location.state?.recommendations;
   const [activeTab, setActiveTab] = useState("overview");
+
+  const formatTextWithBold = (text: string) => {
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        const boldText = part.slice(2, -2);
+        return <strong key={index} className="font-bold text-white">{boldText}</strong>;
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -57,8 +68,17 @@ const Results = () => {
       
       const cleanText = String(text).replace(/[^\x20-\x7E]/g, '');
       const lines = doc.splitTextToSize(cleanText, maxWidth);
+      
+      const lineHeight = fontSize * 0.4 + 5;
+      const totalHeight = lines.length * lineHeight;
+      
+      if (yPosition + totalHeight > 280) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      
       doc.text(lines, margin, yPosition);
-      yPosition += lines.length * (fontSize * 0.4) + 5;
+      yPosition += totalHeight;
     };
 
     const addSectionHeader = (text: string) => {
@@ -71,17 +91,19 @@ const Results = () => {
     };
 
     addText('FITGENIE AI - PERSONALIZED FITNESS PLAN', 18, true, '#1F2937');
-    addText('Generated on ' + new Date().toLocaleDateString(), 10, false, '#6B7280');
+    const date = new Date();
+    const formattedDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getFullYear()).slice(-2)}`;
+    addText('Generated on ' + formattedDate, 10, false, '#6B7280');
     yPosition += 10;
 
     if (recommendations.personalized_summary) {
       addSectionHeader('PERSONALIZED SUMMARY');
-      addText(recommendations.personalized_summary);
+      addText(String(recommendations.personalized_summary));
     }
 
     if (recommendations.bmi_analysis) {
       addSectionHeader('HEALTH ANALYSIS');
-      addText(recommendations.bmi_analysis);
+      addText(String(recommendations.bmi_analysis));
     }
 
     if (recommendations.diet_plan) {
@@ -124,7 +146,10 @@ const Results = () => {
     if (recommendations.supplements) {
       addSectionHeader('SUPPLEMENTS');
       if (Array.isArray(recommendations.supplements)) {
-        recommendations.supplements.forEach((supplement: string) => addText(`• ${supplement}`, 10));
+        recommendations.supplements.forEach((supplement: string) => {
+          const cleanText = supplement.replace(/\*\*/g, '');
+          addText(cleanText, 10);
+        });
       } else {
         addText(recommendations.supplements, 10);
       }
@@ -133,7 +158,10 @@ const Results = () => {
     if (recommendations.lifestyle_tips) {
       addSectionHeader('LIFESTYLE TIPS');
       if (Array.isArray(recommendations.lifestyle_tips)) {
-        recommendations.lifestyle_tips.forEach((tip: string) => addText(`• ${tip}`, 10));
+        recommendations.lifestyle_tips.forEach((tip: string) => {
+          const cleanText = tip.replace(/\*\*/g, '');
+          addText(cleanText, 10);
+        });
       } else {
         addText(recommendations.lifestyle_tips, 10);
       }
@@ -142,32 +170,13 @@ const Results = () => {
     if (recommendations.progress_tracking) {
       addSectionHeader('PROGRESS TRACKING');
       if (Array.isArray(recommendations.progress_tracking)) {
-        recommendations.progress_tracking.forEach((track: string) => addText(`• ${track}`, 10));
+        recommendations.progress_tracking.forEach((track: string) => {
+          const cleanText = track.replace(/\*\*/g, '');
+          addText(cleanText, 10);
+        });
       } else {
         addText(recommendations.progress_tracking, 10);
       }
-    }
-
-    if (recommendations.concern_response) {
-      addSectionHeader('ANSWER TO YOUR QUESTION');
-      const concernText = recommendations.concern_response;
-      const parts = concernText.split(/(\d+\.\s)/);
-      const introText = parts[0].trim();
-      const numberedParts = parts.slice(1);
-      
-      if (introText) {
-        addText(introText);
-      }
-      
-      numberedParts.forEach((part: string, partIndex: number) => {
-        if (part.match(/^\d+\.\s$/)) {
-          if (partIndex + 1 < numberedParts.length) {
-            const content = numberedParts[partIndex + 1].replace(/\*\*(.*?)\*\*/g, '$1');
-            const fullText = part + content;
-            addText(fullText, 11);
-          }
-        }
-      });
     }
 
     yPosition += 5;
@@ -191,13 +200,13 @@ const Results = () => {
     <div className="space-y-6">
       <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
         <h3 className="text-xl font-bold text-white mb-4">Personalized Summary</h3>
-        <p className="text-slate-300 leading-relaxed">{recommendations.personalized_summary}</p>
+        <p className="text-slate-300 leading-relaxed">{String(recommendations.personalized_summary)}</p>
       </div>
 
       {recommendations.bmi_analysis && (
         <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
           <h3 className="text-xl font-bold text-white mb-4">Health Analysis</h3>
-          <p className="text-slate-300 leading-relaxed">{recommendations.bmi_analysis}</p>
+          <p className="text-slate-300 leading-relaxed">{String(recommendations.bmi_analysis)}</p>
         </div>
       )}
     </div>
@@ -222,14 +231,14 @@ const Results = () => {
             {recommendations.diet_plan.daily_calories && (
               <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
                 <h4 className="text-lg font-bold text-white mb-3">Daily Calories</h4>
-                <p className="text-slate-300">{recommendations.diet_plan.daily_calories}</p>
+                <p className="text-slate-300">{String(recommendations.diet_plan.daily_calories)}</p>
               </div>
             )}
 
             {recommendations.diet_plan.macros && (
               <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
                 <h4 className="text-lg font-bold text-white mb-3">Macronutrients</h4>
-                <p className="text-slate-300">{recommendations.diet_plan.macros}</p>
+                <p className="text-slate-300">{String(recommendations.diet_plan.macros)}</p>
               </div>
             )}
           </div>
@@ -283,21 +292,21 @@ const Results = () => {
             {recommendations.workout_plan.frequency && (
               <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
                 <h4 className="text-lg font-bold text-white mb-3">Frequency</h4>
-                <p className="text-slate-300">{recommendations.workout_plan.frequency}</p>
+                <p className="text-slate-300">{String(recommendations.workout_plan.frequency)}</p>
               </div>
             )}
 
             {recommendations.workout_plan.duration && (
               <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
                 <h4 className="text-lg font-bold text-white mb-3">Duration</h4>
-                <p className="text-slate-300">{recommendations.workout_plan.duration}</p>
+                <p className="text-slate-300">{String(recommendations.workout_plan.duration)}</p>
               </div>
             )}
 
             {recommendations.workout_plan.intensity && (
               <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
                 <h4 className="text-lg font-bold text-white mb-3">Intensity</h4>
-                <p className="text-slate-300">{recommendations.workout_plan.intensity}</p>
+                <p className="text-slate-300">{String(recommendations.workout_plan.intensity)}</p>
               </div>
             )}
           </div>
@@ -349,7 +358,7 @@ const Results = () => {
             <div className="space-y-2">
               {recommendations.supplements.map((item: string, index: number) => (
                 <div key={index} className="flex items-start p-3 bg-slate-700/50 rounded-lg">
-                  <span className="text-slate-300 text-sm">{item}</span>
+                  <span className="text-slate-300 text-sm">{formatTextWithBold(item)}</span>
                 </div>
               ))}
             </div>
@@ -362,7 +371,7 @@ const Results = () => {
             <div className="space-y-2">
               {recommendations.lifestyle_tips.map((item: string, index: number) => (
                 <div key={index} className="flex items-start p-3 bg-slate-700/50 rounded-lg">
-                  <span className="text-slate-300 text-sm">{item}</span>
+                  <span className="text-slate-300 text-sm">{formatTextWithBold(item)}</span>
                 </div>
               ))}
             </div>
@@ -380,60 +389,13 @@ const Results = () => {
           <div className="space-y-2">
             {recommendations.progress_tracking.map((item: string, index: number) => (
               <div key={index} className="flex items-center p-3 bg-slate-700/50 rounded-lg">
-                <span className="text-slate-300">{item}</span>
+                <span className="text-slate-300">{formatTextWithBold(item)}</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {recommendations.concern_response && (
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
-          <h3 className="text-xl font-bold text-white mb-4">Answer to Your Question</h3>
-          <div className="text-slate-300 leading-relaxed">
-            {(() => {
-              const parts = recommendations.concern_response.split(/(\d+\.\s)/);
-              const introText = parts[0].trim();
-              const numberedParts = parts.slice(1);
-              
-              return (
-                <>
-                  {introText && (
-                    <p className="mb-4 text-slate-300 leading-relaxed">
-                      {introText.split('**').map((part: string, index: number) => {
-                        if (index % 2 === 1) {
-                          return <strong key={index} className="text-white font-semibold">{part}</strong>;
-                        }
-                        return part;
-                      })}
-                    </p>
-                  )}
-                  {numberedParts.map((part: string, partIndex: number) => {
-                    if (part.match(/^\d+\.\s$/)) {
-                      return (
-                        <div key={partIndex} className="mb-3">
-                          <span className="text-indigo-400 font-bold text-lg">{part}</span>
-                          {partIndex + 1 < numberedParts.length && (
-                            <span className="ml-2">
-                              {numberedParts[partIndex + 1].split('**').map((boldPart: string, boldPartIndex: number) => {
-                                if (boldPartIndex % 2 === 1) {
-                                  return <strong key={boldPartIndex} className="text-white font-semibold">{boldPart}</strong>;
-                                }
-                                return boldPart;
-                              })}
-                            </span>
-                          )}
-                        </div>
-                      );
-                    }
-                    return null;
-                  })}
-                </>
-              );
-            })()}
-          </div>
-        </div>
-      )}
     </div>
   );
 

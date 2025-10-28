@@ -8,13 +8,13 @@ interface StepIndicatorProps {
 
 const StepIndicator = ({ currentStep, totalSteps, steps }: StepIndicatorProps) => {
   return (
-    <div className="w-full max-w-2xl mx-auto py-8">
-      <div className="flex items-center justify-between">
+    <div className="w-full py-8">
+      <div className="flex justify-center items-center">
         {steps.map((step, index) => (
           <div key={index} className="flex items-center">
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center relative">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 relative z-10 ${
                   index < currentStep
                     ? "bg-indigo-500 text-white"
                     : index === currentStep - 1
@@ -29,7 +29,7 @@ const StepIndicator = ({ currentStep, totalSteps, steps }: StepIndicatorProps) =
                 )}
               </div>
               <span
-                className={`text-xs mt-2 text-center max-w-20 whitespace-nowrap ${
+                className={`text-xs mt-2 text-center whitespace-nowrap ${
                   index < currentStep
                     ? "text-indigo-400"
                     : index === currentStep - 1
@@ -42,10 +42,10 @@ const StepIndicator = ({ currentStep, totalSteps, steps }: StepIndicatorProps) =
             </div>
             {index < totalSteps - 1 && (
               <div
-                className={`flex-1 h-0.5 mx-4 transition-all duration-300 ${
+                className={`w-16 h-1 mx-4 transition-all duration-300 ${
                   index < currentStep - 1
                     ? "bg-indigo-500"
-                    : "bg-gray-700"
+                    : "bg-gray-600"
                 }`}
               />
             )}
