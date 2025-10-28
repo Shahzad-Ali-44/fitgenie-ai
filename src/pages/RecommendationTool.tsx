@@ -27,14 +27,8 @@ const RecommendationTool = () => {
     target_weight: "",
     dietary_preferences: "",
     dietary_restrictions: "",
-    meal_frequency: "",
-    cooking_skill: "",
     fitness_goals: "",
-    timeline: "",
-    lifestyle_factors: "",
-    sleep_schedule: "",
     health_conditions: "",
-    medications: "",
     allergies: "",
   });
 
@@ -51,22 +45,16 @@ const RecommendationTool = () => {
     target_weight: "e.g., 65kg or 143lbs",
     dietary_preferences: "Vegetarian, Vegan, Omnivore, Keto, etc.",
     dietary_restrictions: "Gluten-free, Lactose-intolerant, etc.",
-    meal_frequency: "2-3 meals, 4-5 meals, 6+ meals",
-    cooking_skill: "Beginner, Intermediate, Advanced",
     fitness_goals: "Weight loss, Muscle gain, Endurance, etc.",
-    timeline: "1 month, 3 months, 6 months, 1 year",
-    lifestyle_factors: "Desk job, Physical work, Student, etc.",
-    sleep_schedule: "e.g., 10 PM - 6 AM",
     health_conditions: "Diabetes, Hypertension, etc.",
-    medications: "List any medications",
     allergies: "Food allergies, etc.",
   };
 
   const stepFields = {
     1: ['name', 'age', 'gender', 'height', 'weight'],
     2: ['activity_level', 'current_fitness_level', 'target_weight'],
-    3: ['dietary_preferences', 'dietary_restrictions', 'meal_frequency', 'cooking_skill', 'fitness_goals', 'timeline', 'lifestyle_factors', 'sleep_schedule'],
-    4: ['health_conditions', 'medications', 'allergies']
+    3: ['dietary_preferences', 'dietary_restrictions', 'fitness_goals'],
+    4: ['health_conditions', 'allergies']
   };
 
   const stepTitles = {
@@ -143,40 +131,12 @@ const RecommendationTool = () => {
       case 'dietary_restrictions':
         return '';
         
-      case 'meal_frequency':
-        if (!trimmedValue) return 'Meal frequency is required';
-        if (!/\d+/.test(trimmedValue)) return 'Meal frequency must contain a number (e.g., "3 meals")';
-        return '';
-        
-      case 'cooking_skill':
-        if (!trimmedValue) return 'Cooking skill is required';
-        const validCookingSkills = ['Beginner', 'Intermediate', 'Advanced'];
-        if (!validCookingSkills.includes(trimmedValue)) return 'Cooking skill must be Beginner, Intermediate, or Advanced';
-        return '';
-        
       case 'fitness_goals':
         if (!trimmedValue) return 'Fitness goals are required';
         if (trimmedValue.length < 5) return 'Fitness goals must be at least 5 characters';
         return '';
         
-      case 'timeline':
-        if (!trimmedValue) return 'Timeline is required';
-        if (!/\d+.*(month|week|day|year)/i.test(trimmedValue)) return 'Timeline must contain number and time unit (e.g., "3 months")';
-        return '';
-        
-      case 'lifestyle_factors':
-        if (!trimmedValue) return 'Lifestyle factors are required';
-        if (trimmedValue.length < 5) return 'Lifestyle factors must be at least 5 characters';
-        return '';
-        
-      case 'sleep_schedule':
-        if (!trimmedValue) return 'Sleep schedule is required';
-        const sleepPattern = /^\d{1,2}:\d{2}\s*(AM|PM)\s*-\s*\d{1,2}:\d{2}\s*(AM|PM)$|^\d{1,2}\s*(AM|PM)\s*-\s*\d{1,2}\s*(AM|PM)$/i;
-        if (!sleepPattern.test(trimmedValue)) return 'Sleep schedule format: 10 PM - 6 AM or 22:00 - 06:00';
-        return '';
-        
       case 'health_conditions':
-      case 'medications':
       case 'allergies':
         return '';
         

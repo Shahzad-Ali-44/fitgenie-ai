@@ -69,7 +69,7 @@ const Results = () => {
       const cleanText = String(text).replace(/[^\x20-\x7E]/g, '');
       const lines = doc.splitTextToSize(cleanText, maxWidth);
       
-      const lineHeight = fontSize * 0.4 + 5;
+      const lineHeight = fontSize * 0.4 + 1;
       const totalHeight = lines.length * lineHeight;
       
       if (yPosition + totalHeight > 280) {
@@ -86,6 +86,7 @@ const Results = () => {
         doc.addPage();
         yPosition = 20;
       }
+      yPosition += 3;
       addText(text, 14, true, '#4F46E5');
       addText('-'.repeat(50), 10, false, '#6B7280');
     };
@@ -139,7 +140,6 @@ const Results = () => {
         } else {
           addText(`  ${meals}`, 10);
         }
-        yPosition += 5;
       });
     }
 
