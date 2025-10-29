@@ -9,7 +9,7 @@ interface StepIndicatorProps {
 const StepIndicator = ({ currentStep, totalSteps, steps }: StepIndicatorProps) => {
   return (
     <div className="w-full py-6 sm:py-8 px-2">
-      <div className="flex justify-center items-center overflow-x-auto scrollbar-hide">
+      <div className="flex justify-center items-center">
         {steps.map((step, index) => (
           <div key={index} className="flex items-center flex-shrink-0">
             <div className="flex flex-col items-center relative">
