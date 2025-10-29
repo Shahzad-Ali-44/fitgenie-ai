@@ -188,12 +188,12 @@ const Results = () => {
   };
 
   const tabs = [
-    { id: "overview", label: "Overview", icon: TrendingUp },
-    { id: "diet", label: "Diet Plan", icon: Utensils },
-    { id: "workout", label: "Workout", icon: Dumbbell },
-    { id: "meals", label: "Meal Ideas", icon: Apple },
-    { id: "supplements", label: "Supplements & Tips", icon: Pill },
-    { id: "progress", label: "Progress", icon: BarChart }
+    { id: "overview", label: "Overview", shortLabel: "Overview", icon: TrendingUp },
+    { id: "diet", label: "Diet Plan", shortLabel: "Diet", icon: Utensils },
+    { id: "workout", label: "Workout", shortLabel: "Workout", icon: Dumbbell },
+    { id: "meals", label: "Meal Ideas", shortLabel: "Meals", icon: Apple },
+    { id: "supplements", label: "Supplements & Tips", shortLabel: "Supplements", icon: Pill },
+    { id: "progress", label: "Progress", shortLabel: "Progress", icon: BarChart }
   ];
 
   const renderOverviewTab = () => (
@@ -453,14 +453,17 @@ const Results = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center justify-center px-3 py-3 rounded-xl transition-all duration-300 ${
+                  className={`flex flex-col items-center justify-center px-2 py-3 rounded-xl transition-all duration-300 min-h-[60px] ${
                     activeTab === tab.id
                       ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/30"
                       : "text-slate-300 hover:text-white hover:bg-slate-700/50"
                   }`}
                 >
-                  <Icon className="w-4 h-4 mr-2" />
-                  <span className="font-medium text-sm">{tab.label}</span>
+                  <Icon className="w-4 h-4 mb-1" />
+                  <span className="font-medium text-xs text-center leading-tight">
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden">{tab.shortLabel}</span>
+                  </span>
                 </button>
               );
             })}

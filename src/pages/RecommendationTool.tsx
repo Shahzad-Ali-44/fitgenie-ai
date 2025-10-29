@@ -274,7 +274,10 @@ const RecommendationTool = () => {
                   Generating...
                 </>
               ) : (
-                "Generate My Plan"
+                <>
+                  <span className="block sm:hidden">Generate</span>
+                  <span className="hidden sm:block">Generate My Plan</span>
+                </>
               )}
             </Button>
           )}
